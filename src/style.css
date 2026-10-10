@@ -1,0 +1,372 @@
+/* vue-jalali-datepicker — every color/size is a CSS custom property, so you can
+   theme it from any ancestor (or :root) without touching these selectors. */
+
+.vjdp-calendar,
+.vjdp-popover {
+  --vjdp-font-family: inherit;
+  --vjdp-bg: #ffffff;
+  --vjdp-bg-hover: #f5efe8;
+  --vjdp-fg: #2a1f1e;
+  --vjdp-fg-muted: #7a6b67;
+  --vjdp-fg-subtle: #a3948f;
+  --vjdp-border: #e8dfd6;
+  --vjdp-border-faint: #f1eae3;
+  --vjdp-accent: #d08b7c;
+  --vjdp-accent-hover: #c77669;
+  --vjdp-accent-soft: #f4ddd6;
+  --vjdp-accent-fg: #8e5749;
+  --vjdp-on-accent: #ffffff;
+  --vjdp-radius: 16px;
+  --vjdp-radius-control: 10px;
+  --vjdp-shadow: 0 1px 3px rgb(42 31 30 / 0.06);
+  --vjdp-shadow-elevated: 0 12px 32px rgb(42 31 30 / 0.14);
+  --vjdp-width: 640px;
+  --vjdp-z-index: 50;
+  --vjdp-transition: 150ms ease;
+  font-family: var(--vjdp-font-family);
+}
+
+.vjdp-dark .vjdp-calendar,
+.vjdp-dark.vjdp-calendar,
+.vjdp-dark .vjdp-popover,
+.vjdp-dark.vjdp-popover,
+.dark .vjdp-calendar,
+.dark .vjdp-popover {
+  --vjdp-bg: #1d1615;
+  --vjdp-bg-hover: #2a201e;
+  --vjdp-fg: #f3e9e4;
+  --vjdp-fg-muted: #b4a49f;
+  --vjdp-fg-subtle: #85756f;
+  --vjdp-border: #3a2e2b;
+  --vjdp-border-faint: #2c2321;
+  --vjdp-accent: #d9967f;
+  --vjdp-accent-hover: #e3a892;
+  --vjdp-accent-soft: #3a241d;
+  --vjdp-accent-fg: #e6ad93;
+  --vjdp-on-accent: #2a1f1e;
+  --vjdp-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+  --vjdp-shadow-elevated: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+.vjdp-calendar *,
+.vjdp-popover * {
+  box-sizing: border-box;
+}
+
+/* --- Calendar surface ---------------------------------------------------- */
+
+.vjdp-calendar {
+  container-type: inline-size;
+  width: var(--vjdp-width);
+  max-width: 100%;
+  padding: 20px;
+  border: 1px solid var(--vjdp-border);
+  border-radius: var(--vjdp-radius);
+  background: var(--vjdp-bg);
+  color: var(--vjdp-fg);
+  box-shadow: var(--vjdp-shadow);
+}
+
+.vjdp-calendar:not(.vjdp-calendar--double) {
+  --vjdp-width: 320px;
+}
+
+.vjdp-calendar--elevated {
+  max-width: min(var(--vjdp-width), calc(100vw - 32px));
+  box-shadow: var(--vjdp-shadow-elevated);
+}
+
+.vjdp-calendar__months {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.vjdp-month--secondary {
+  display: none !important;
+}
+
+@container (min-width: 560px) {
+  .vjdp-calendar--double .vjdp-calendar__months {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .vjdp-month--secondary {
+    display: flex !important;
+  }
+
+  .vjdp-calendar--double .vjdp-month:first-child .vjdp-nav--next {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* --- Month --------------------------------------------------------------- */
+
+.vjdp-month {
+  display: flex;
+  flex-direction: column;
+}
+
+.vjdp-month__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.vjdp-month__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.vjdp-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--vjdp-fg-muted);
+  cursor: pointer;
+  transition: background-color var(--vjdp-transition), color var(--vjdp-transition);
+}
+
+.vjdp-nav:hover {
+  background: var(--vjdp-bg-hover);
+  color: var(--vjdp-fg);
+}
+
+.vjdp-nav--placeholder {
+  pointer-events: none;
+}
+
+.vjdp-nav svg,
+.vjdp-trigger__icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.vjdp-weekdays,
+.vjdp-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.vjdp-weekdays {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--vjdp-fg-subtle);
+}
+
+.vjdp-days {
+  row-gap: 4px;
+}
+
+.vjdp-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+}
+
+.vjdp-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--vjdp-fg);
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--vjdp-transition), color var(--vjdp-transition);
+}
+
+.vjdp-day:hover {
+  background: var(--vjdp-bg-hover);
+}
+
+.vjdp-day:focus-visible,
+.vjdp-nav:focus-visible,
+.vjdp-btn:focus-visible {
+  outline: 2px solid var(--vjdp-accent);
+  outline-offset: 2px;
+}
+
+.vjdp-day--today {
+  color: var(--vjdp-accent-fg);
+  font-weight: 600;
+}
+
+.vjdp-day--in-range,
+.vjdp-day--in-range:hover {
+  background: var(--vjdp-accent-soft);
+  color: var(--vjdp-accent-fg);
+}
+
+.vjdp-day--selected {
+  background: var(--vjdp-accent);
+  color: var(--vjdp-on-accent);
+  font-weight: 500;
+}
+
+.vjdp-day--selected:hover {
+  background: var(--vjdp-accent-hover);
+}
+
+.vjdp-day:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --- Footer & buttons ---------------------------------------------------- */
+
+.vjdp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vjdp-border-faint);
+}
+
+.vjdp-footer__summary {
+  margin: 0;
+  font-size: 14px;
+  color: var(--vjdp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.vjdp-footer__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.vjdp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--vjdp-border);
+  border-radius: var(--vjdp-radius-control);
+  background: var(--vjdp-bg);
+  color: var(--vjdp-fg);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--vjdp-transition), border-color var(--vjdp-transition);
+}
+
+.vjdp-btn:hover {
+  background: var(--vjdp-bg-hover);
+}
+
+.vjdp-btn--primary {
+  border-color: var(--vjdp-accent);
+  background: var(--vjdp-accent);
+  color: var(--vjdp-on-accent);
+}
+
+.vjdp-btn--primary:hover {
+  border-color: var(--vjdp-accent-hover);
+  background: var(--vjdp-accent-hover);
+}
+
+.vjdp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Popover trigger ----------------------------------------------------- */
+
+.vjdp-popover {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+.vjdp-trigger {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.vjdp-trigger__icon {
+  width: 44px;
+  height: auto;
+  padding: 0;
+}
+
+.vjdp-input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--vjdp-border);
+  border-radius: var(--vjdp-radius-control);
+  background: var(--vjdp-bg);
+  color: var(--vjdp-fg);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.vjdp-input::placeholder {
+  color: var(--vjdp-fg-subtle);
+}
+
+.vjdp-input:focus-visible {
+  outline: 2px solid var(--vjdp-accent);
+  outline-offset: 1px;
+}
+
+.vjdp-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vjdp-popover__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: var(--vjdp-z-index);
+}
+
+.vjdp-popover--align-end .vjdp-popover__panel {
+  inset-inline-end: 0;
+}
+
+.vjdp-popover--align-start .vjdp-popover__panel {
+  inset-inline-start: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vjdp-calendar,
+  .vjdp-popover {
+    --vjdp-transition: 0s;
+  }
+}

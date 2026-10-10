@@ -1,0 +1,46 @@
+{
+  "name": "vue-jalali-datepicker",
+  "version": "0.1.0",
+  "description": "A lightweight, zero-dependency Persian (Jalali / Shamsi) date and range picker for Vue 3.",
+  "keywords": ["vue", "vue3", "datepicker", "date-picker", "range-picker", "jalali", "shamsi", "persian", "farsi", "calendar", "rtl"],
+  "license": "MIT",
+  "author": "Aria Aghakhani (https://www.dev-aria.com)",
+  "homepage": "https://github.com/Ariaaghakhani/vue-jalali-datepicker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ariaaghakhani/vue-jalali-datepicker.git"
+  },
+  "bugs": "https://github.com/Ariaaghakhani/vue-jalali-datepicker/issues",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "vite --config vite.playground.config.ts",
+    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.0"
+  }
+}

@@ -724,7 +724,7 @@ src/
 
 Before opening a PR, please make sure `npm run typecheck`, `npm test` and `npm run build` all pass. CI runs the same checks.
 
-**Releasing** (maintainers): bump the version in `package.json`, then publish a GitHub release. The [publish workflow](.github/workflows/publish.yml) builds the package and publishes it to npm with provenance, using the `NPM_TOKEN` repository secret.
+**Releasing** (maintainers): bump `version` in `package.json` (and add a `CHANGELOG.md` entry) in your pull request. When it's merged into `main`, the [publish workflow](.github/workflows/publish.yml) type-checks, tests and builds the package, then publishes it to npm with provenance using the `NPM_TOKEN` repository secret. Merges that don't change the version skip publishing. The workflow can also be run by hand from the Actions tab.
 
 ---
 

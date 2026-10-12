@@ -4,6 +4,7 @@
     ref="rootRef"
     class="vjdp-popover"
     :class="`vjdp-popover--align-${align}`"
+    :style="colorStyle"
     :dir="rtl ? 'rtl' : 'ltr'"
   >
     <slot name="trigger" :open="open" :toggle="toggle" :label="committedLabel" :placeholder="placeholderLabel">
@@ -38,6 +39,7 @@
     <div v-if="open" class="vjdp-popover__panel">
       <DatePickerCalendar
         elevated
+        :style="colorStyle"
         v-bind="calendarProps"
         :show-footer="true"
         :show-confirm="!autoApply"
@@ -52,6 +54,7 @@
 
   <DatePickerCalendar
     v-else
+    :style="colorStyle"
     v-bind="calendarProps"
     :show-footer="showFooter"
     :show-confirm="false"
@@ -67,6 +70,8 @@ import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import DatePickerCalendar from './DatePickerCalendar.vue'
 import { jalaliKey, shiftJalaliMonth, toFaDigits, toGregorian, toJalali } from '../jalali'
 import type { JalaliDate } from '../jalali'
+import { colorVariables } from '../color'
+import type { DatePickerColor } from '../color'
 import { faLocale } from '../locale'
 import type { DatePickerLocale } from '../locale'
 import type { DatePickerValue, DateRange } from '../types'
@@ -95,6 +100,11 @@ const props = withDefaults(defineProps<{
   align?: 'start' | 'end'
   disabled?: boolean
   name?: string
+  /**
+   * Accent color: any CSS color (hover, range and text shades are derived from it),
+   * or an object setting individual shades.
+   */
+  color?: DatePickerColor
   /** Custom label for a selected date; defaults to `<day> <month name>`. */
   formatDate?: (date: Date, jalali: JalaliDate) => string
 }>(), {
@@ -122,6 +132,7 @@ const emit = defineEmits<{
   close: []
 }>()
 
+const colorStyle = computed(() => colorVariables(props.color))
 const labels = computed<DatePickerLocale>(() => ({ ...faLocale, ...props.locale }))
 const formatNumber = (value: number) => (props.digits === 'fa' ? toFaDigits(value) : String(value))
 

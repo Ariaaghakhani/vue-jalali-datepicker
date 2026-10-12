@@ -6,6 +6,8 @@ export { JalaliDatePicker }
 export { default as JalaliCalendar } from './components/DatePickerCalendar.vue'
 export * from './jalali'
 export * from './locale'
+export { colorVariables, readableTextColor } from './color'
+export type { DatePickerColor, DatePickerColors } from './color'
 export type * from './types'
 
 export const JalaliDatePickerPlugin: Plugin = {

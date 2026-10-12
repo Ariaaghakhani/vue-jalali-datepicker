@@ -24,6 +24,14 @@
       <pre>{{ format(english) }}</pre>
     </section>
 
+    <section>
+      <h2>Custom color</h2>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px">
+        <button v-for="swatch in swatches" :key="swatch" type="button" :style="{ background: swatch, width: '32px', height: '32px', border: 0, borderRadius: '50%', cursor: 'pointer' }" @click="brand = swatch" />
+      </div>
+      <JalaliDatePicker v-model="colored" variant="inline" range :color="brand" />
+    </section>
+
     <section class="vjdp-dark" style="background: #120d0c; padding: 24px; border-radius: 16px">
       <h2 style="color: #f3e9e4">Dark theme</h2>
       <JalaliDatePicker v-model="dark" variant="inline" range />
@@ -41,6 +49,9 @@ const range = ref<DateRange>({ start: null, end: null })
 const inline = ref<Date | null>(null)
 const english = ref<Date | null>(null)
 const dark = ref<DateRange>({ start: null, end: null })
+const colored = ref<DateRange>({ start: null, end: null })
+const swatches = ['#2563eb', '#16a34a', '#7c3aed', '#facc15', '#0f172a']
+const brand = ref(swatches[0]!)
 
 function daysFromToday(offset: number) {
   const date = new Date()

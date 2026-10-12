@@ -36,6 +36,7 @@ RTL-first · Fully typed · Themeable with CSS variables · ~6 kB gzipped
   - [Types](#types)
 - [Localization](#localization)
 - [Theming](#theming)
+  - [The `color` prop](#the-color-prop)
 - [Jalali utilities](#jalali-utilities)
 - [Working with dates](#working-with-dates)
 - [Accessibility](#accessibility)
@@ -57,7 +58,7 @@ RTL-first · Fully typed · Themeable with CSS variables · ~6 kB gzipped
 | 🚫 **Flexible disabling** | `minDate`, `maxDate`, a list of `disabledDates`, or any `isDateDisabled(date)` predicate. |
 | 🌐 **Localizable** | Persian and English labels included, every string overridable, Persian or Latin digits. |
 | ↔️ **RTL first, LTR ready** | Built for Persian interfaces, works just as well in LTR apps. |
-| 🎨 **Themeable** | Every color, radius and shadow is a CSS custom property. A dark theme is built in. |
+| 🎨 **Themeable** | One `color` prop to brand it, or every color, radius and shadow as a CSS custom property. A dark theme is built in. |
 | 🧮 **Exact conversion** | Closed-form Jalali ↔ Gregorian arithmetic, verified day by day against `Intl`. Doesn't depend on the browser's Persian calendar support. |
 | 🟦 **TypeScript** | Written in TypeScript, with full types for props, events and utilities. |
 | ⚡ **SSR friendly** | No DOM access during render. Works in Nuxt and other SSR setups. |
@@ -245,6 +246,14 @@ import { JalaliDatePicker, enLocale } from 'vue-jalali-datepicker'
 </template>
 ```
 
+### Brand color
+
+```vue
+<JalaliDatePicker v-model="date" color="#2563eb" />
+```
+
+Any CSS color works. See [The `color` prop](#the-color-prop) for details.
+
 ### Custom label format
 
 ```vue
@@ -336,6 +345,7 @@ The built-in input is `readonly` and accepts a `name`. Send whatever format your
 | `align` | `'start' \| 'end'` | `'start'` | Popover alignment relative to the trigger (logical, so it follows `dir`). |
 | `disabled` | `boolean` | `false` | Disables the built-in trigger. |
 | `name` | `string` | — | `name` attribute for the built-in input. |
+| `color` | `string \| Partial<DatePickerColors>` | — | Accent color. A CSS color string derives every shade automatically; an object sets individual shades. See [The `color` prop](#the-color-prop). |
 | `formatDate` | `(date: Date, jalali: JalaliDate) => string` | — | Custom label for selected dates. Defaults to `<day> <month>`, e.g. `۱۸ مهر`. |
 
 ### Events
@@ -371,6 +381,8 @@ import type {
   DateRange,        // { start: Date | null; end: Date | null }
   DatePickerValue,  // Date | null | DateRange
   DatePickerLocale, // all translatable strings (see below)
+  DatePickerColor,  // string | Partial<DatePickerColors>
+  DatePickerColors, // { accent, accentHover, accentSoft, accentFg, onAccent }
   JalaliDate,       // { jy: number; jm: number; jd: number }
   JalaliMonth,      // { jy: number; jm: number }
 } from 'vue-jalali-datepicker'
@@ -437,7 +449,56 @@ const pickerLocale = computed(() => ({ today: t('picker.today'), confirm: t('pic
 
 ## Theming
 
-The default look is a neutral, soft "rose" palette. Everything is driven by CSS custom properties defined on `.vjdp-calendar` and `.vjdp-popover`, so you can retheme it from any ancestor without fighting specificity.
+The default look is a soft "rose" palette. There are two ways to change it:
+
+1. The **`color` prop**, the quickest way to match your brand.
+2. **CSS custom properties**, for full control over every color, radius and shadow.
+
+### The `color` prop
+
+Pass any CSS color and the picker works out the rest:
+
+```vue
+<JalaliDatePicker v-model="date" color="#2563eb" />
+<JalaliDatePicker v-model="range" range color="rgb(22 163 74)" />
+<JalaliDatePicker v-model="date" color="var(--brand-primary)" />
+```
+
+From that one color it derives:
+
+| Shade | How it's derived |
+| --- | --- |
+| Selected day, confirm button | the color itself |
+| Hover on the selected day | mixed 15% toward the text color |
+| Days inside a range | 18% of the color over the surface |
+| Today's number, text inside a range | mixed 45% toward the text color, for contrast |
+| Hover on regular days | 8% tint of the surface |
+| Text on selected days | white or near-black, whichever has the higher WCAG contrast |
+
+Because the shades are mixed against the surface and text colors, they adapt automatically to [dark mode](#dark-mode).
+
+> **Note:** text on selected days is picked automatically for hex (`#2563eb`, `#25e`, `#2563ebcc`) and `rgb()` / `rgba()` colors. For other formats (named colors, `hsl()`, `var()`…) it stays at the theme default (white). Use the object form to set it.
+
+To control each shade yourself, pass an object instead. Any key you leave out keeps the theme value:
+
+```vue
+<JalaliDatePicker
+  v-model="date"
+  :color="{
+    accent: '#0f766e',
+    accentHover: '#115e59',
+    accentSoft: '#ccfbf1',
+    accentFg: '#115e59',
+    onAccent: '#ffffff',
+  }"
+/>
+```
+
+The prop is reactive, so you can switch colors at runtime (for example, a per-user theme). It sets the variables inline on the component, so it takes precedence over the CSS variables below for the shades it covers.
+
+### CSS variables
+
+Everything is driven by CSS custom properties defined on `.vjdp-calendar` and `.vjdp-popover`, so you can retheme it from any ancestor without fighting specificity.
 
 ```css
 /* Brand it once, app-wide */
@@ -587,7 +648,7 @@ The conversion is a closed-form implementation of the Borkowski algorithm, valid
 
 ## Browser support
 
-All evergreen browsers. The responsive two-month layout uses [CSS container queries](https://caniuse.com/css-container-queries) (Chrome/Edge 105+, Safari 16+, Firefox 110+). Older browsers still get a fully working single-month layout.
+All evergreen browsers. The responsive two-month layout uses [CSS container queries](https://caniuse.com/css-container-queries) (Chrome/Edge 105+, Safari 16+, Firefox 110+). Older browsers still get a fully working single-month layout. The derived shades of the `color` prop use [`color-mix()`](https://caniuse.com/mdn-css_types_color_color-mix) (Chrome/Edge 111+, Safari 16.2+, Firefox 113+).
 
 ---
 
@@ -655,6 +716,7 @@ src/
 │   └── DatePickerMonth.vue     # a single month
 ├── jalali.ts                   # conversion & calendar utilities
 ├── locale.ts                   # faLocale / enLocale
+├── color.ts                    # `color` prop → CSS variables
 ├── types.ts
 ├── style.css                   # all styles & CSS variables
 └── index.ts                    # public exports + plugin
